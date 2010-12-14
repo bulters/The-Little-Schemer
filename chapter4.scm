@@ -96,11 +96,12 @@
       (pick (sub1 n) (cdr lat))))))
 
 ;;; rempick
-(define rempick
-  (lambda (n lat)
-    (cond
-     ((zero? (sub1 n)) (cdr lat))
-     (else (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
+;(define rempick
+;  (lambda (n lat)
+;    (cond
+;     ((zero? (sub1 n)) (cdr lat))
+;     (else (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
+;; rempick rewritten below using one? instead of (sub1 n)
 
 ;;; no-nums
 (define no-nums
@@ -109,3 +110,39 @@
      ((null? lat) (quote ()))
      ((number? (car lat)) (no-nums (cdr lat)))
      (else (cons (car lat) (no-nums (cdr lat)))))))
+
+;;; all-nums
+(define all-nums
+  (lambda (lat)
+    (cond
+     ((null? lat) (quote ()))
+     ((number? (car lat)) (cons (car lat) (all-nums (cdr lat))))
+     (else (all-nums (cdr lat))))))
+
+;;; eqan? (equal atom or number)
+(define eqan?
+  (lambda (a1 a2)
+    (cond
+     ((and (number? a1) (number? a2)) (= a1 a2))
+     ((or (number? a1) (number? a2)) #f)
+     (else (eq? a1 a2)))))
+
+;;; occur
+(define occur
+  (lambda (a lat)
+    (cond
+     ((null? lat) 0)
+     ((eq? (car lat) a) (add1 (occur a (cdr lat))))
+     (else (occur a (cdr lat))))))
+
+;;; one?
+(define one?
+  (lambda (n)
+    (= n 1)))
+
+;;; rempick (take two)
+(define rempick
+  (lambda (n lat)
+    (cond
+     ((one? n) (cdr lat))
+     (else (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
